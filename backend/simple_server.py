@@ -12,25 +12,24 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_path = urlparse(self.path)
         
-        # Add CORS headers
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        
         if parsed_path.path == '/':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
             self.end_headers()
             response = {"message": "Veritas IPO Intelligence API", "status": "running"}
             self.wfile.write(json.dumps(response).encode())
             
         elif parsed_path.path.startswith('/api/director/'):
-            director_name = parsed_path.path.split('/')[-1]
+            director_name = urllib.parse.unquote(parsed_path.path.split('/')[-1])
             self.get_director(director_name)
             
         else:
             self.send_response(404)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             response = {"error": "Not found"}
             self.wfile.write(json.dumps(response).encode())
@@ -50,6 +49,7 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
             if data.get('Person Name', '').lower() != name.lower():
                 self.send_response(404)
                 self.send_header('Content-type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 response = {"error": "Director not found"}
                 self.wfile.write(json.dumps(response).encode())
@@ -63,12 +63,14 @@ class APIHandler(http.server.BaseHTTPRequestHandler):
             
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps(result).encode())
             
         except FileNotFoundError:
             self.send_response(500)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             response = {"error": "Data file not found"}
             self.wfile.write(json.dumps(response).encode())
