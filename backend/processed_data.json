@@ -1,0 +1,25 @@
+{
+  "Person Name": "Neha Bansal",
+  "DIN": "08123456",
+  "PAN": "ABCPN1234D",
+  "Associated Companies": [
+    {
+      "name": "Lenskart Solutions Private Limited",
+      "role": "Director"
+    },
+    {
+      "name": "Tech Innovations Pvt Ltd",
+      "role": "Independent Director"
+    },
+    {
+      "name": "Vision Corp",
+      "role": "Advisor"
+    }
+  ],
+  "Ownership Details": "Promoters: 19.96%, Investors: 42.74%, Public: 37.30%",
+  "Litigation & Investigations": "No material legal proceedings pending against Ms. Neha Bansal. No cases involving fraud, FIR, or any regulatory action have been filed against her. She has maintained a clean governance track record throughout her career.",
+  "Background": "Started career at KPMG, moved to McKinsey & Company. Extensive experience in financial consulting and corporate governance.",
+  "Role": "Independent Director",
+  "Experience": "Senior Consultant at McKinsey & Company (2018-2022), Financial Analyst at KPMG (2015-2018), Various advisory roles in fintech companies",
+  "Education": "MBA from IIM Bangalore (2015), B.Com (Hons) from Delhi University (2013)"
+}
