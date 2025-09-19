@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veritas - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .error {
+            background-color: #fadbd8;
+            border-left-color: #e74c3c;
+        }
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .score-green { color: #27ae60; font-weight: bold; }
+        .score-amber { color: #f39c12; font-weight: bold; }
+        .score-red { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Veritas: IPO Intelligence Engine</h1>
+        <p style="text-align: center; color: #666;">Simple test page for backend API integration</p>
+        
+        <div class="form-group">
+            <input type="text" id="directorName" placeholder="Enter director name (try 'Neha Bansal')" value="Neha Bansal">
+        </div>
+        
+        <button onclick="searchDirector()">Search Director</button>
+        
+        <div id="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        async function searchDirector() {
+            const name = document.getElementById('directorName').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!name) {
+                showError('Please enter a director name');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8000/api/director/${encodeURIComponent(name)}`);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    showError(errorData.error || 'Director not found');
+                    return;
+                }
+                
+                const data = await response.json();
+                showResult(data);
+                
+            } catch (error) {
+                showError('Error connecting to API: ' + error.message);
+            }
+        }
+        
+        function showResult(data) {
+            const resultDiv = document.getElementById('result');
+            const integrityScore = data.integrity_score || {};
+            
+            let html = `
+                <h3>Profile: ${data['Person Name']}</h3>
+                <p><strong>DIN:</strong> ${data['DIN'] || 'N/A'}</p>
+                <p><strong>PAN:</strong> ${data['PAN'] || 'N/A'}</p>
+                <p><strong>Role:</strong> ${data['Role'] || 'N/A'}</p>
+                <p><strong>Education:</strong> ${data['Education'] || 'N/A'}</p>
+                
+                <h4>Integrity Score:</h4>
+            `;
+            
+            for (const [key, value] of Object.entries(integrityScore)) {
+                const className = `score-${value.toLowerCase()}`;
+                html += `
+                    <div class="score-item">
+                        <span>${key}:</span>
+                        <span class="${className}">${value}</span>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <h4>Litigation & Investigations:</h4>
+                <p style="font-style: italic; background: white; padding: 10px; border-radius: 3px;">${data['Litigation & Investigations'] || 'N/A'}</p>
+            `;
+            
+            resultDiv.innerHTML = html;
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+        }
+        
+        function showError(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result error';
+        }
+    </script>
+</body>
+</html>
